@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="app.js" defer></script>
+</head>
+<body>
+<div id="map"></div>
+<!-- <form id="single">
+    <input name="icao" placeholder="Input airport icao code">
+    <input type="submit" value="Search">
+</form> -->
+<div id="questionModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">×</span>
+        <h2 id="questionText"></h2>
+        <button class="answer" onclick="checkAnswer(this)"></button>
+        <button class="answer" onclick="checkAnswer(this)"></button>
+        <button class="answer" onclick="checkAnswer(this)"></button>
+    </div>
+</div>
+</body>
+</html>
