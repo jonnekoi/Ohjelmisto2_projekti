@@ -2,6 +2,7 @@ import json
 from flask import Flask
 from db import Database
 from flask_cors import CORS
+import requests
 
 db = Database()
 app = Flask(__name__)

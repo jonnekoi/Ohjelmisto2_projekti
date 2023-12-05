@@ -10,11 +10,8 @@
 </head>
 <body>
 <div id="map"></div>
-<img src="icons/Air-TRAVELLER-S-CHALLENGE-5-12-2023.png" height="184" width="1024" id="header"/>
-<!-- <form id="single">
-    <input name="icao" placeholder="Input airport icao code">
-    <input type="submit" value="Search">
-</form> -->
+<img src="icons/Air-TRAVELLER-S-CHALLENGE-5-12-2023.png" height="184" width="1024" id="game-title"/>
+
 <div id="questionModal" class="modal">
     <div class="modal-content">
         <span class="close-button">×</span>
@@ -25,12 +22,21 @@
     </div>
 
 </div>
-<div id="stats_box">
-    <img id="stats_text" src="icons/Stats-5-12-2023.png"/>
+<div class="sidebar">
+    <div id="stats-box">
+        <img id="stats-text" src="icons/Stats-5-12-2023.png"/>
+        <h3 class="stat-points">Points: <span class="stats-points-target"></span></h3>
+        <h3 class="stat-co2">CO2 usage: <span class="stats-co2-target">0KG</span></h3>
+        <h3 class="stat-distance">Distance: <span class="stats-distance-target">0KM</span></h3>
 
     </div>
-<div id="weather_box">
-    <img id="weather_text" src="icons/WEATHER-5-12-2023.png" />
+
+    <div id="weather-box">
+        <img id="weather-text" src="icons/WEATHER-5-12-2023.png" />
+        <h3 class="weather-temp">Temperature: <span class="weather-temp-target"></span></h3>
+        <h3 class="weather-desc"><span class="weather-desc-target"></span></h3>
+        <h3 class="weather-desc"><img src="" class="weather-icon-target" alt="-" height="80px" width="80px"></h3>
+    </div>
 </div>
 </body>
 </html>

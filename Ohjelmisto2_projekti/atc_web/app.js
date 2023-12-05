@@ -12,16 +12,51 @@ const startingPointIcon = L.icon({
     popupAnchor: [8, -41] // Point from which the popup should open relative to the iconAnchor.
 });
 
+let correctAnswer = "";
+
+let points = 0;
+let co2_consumed = 0;
+let distance = 0;
+
+let answerStreak = 0;
+let totalCorrectAnswers = 0;
+
+const pointsElement = document.querySelector('.stats-points-target');
+const CO2Element = document.querySelector('.stats-co2-target');
+const distanceElement = document.querySelector('.stats-distance-target');
+
+const tempElement = document.querySelector('.weather-temp-target');
+const weatherImgElement = document.querySelector('.weather-icon-target');
+
+const questionModal = document.getElementById("questionModal");
+
+
 document.addEventListener('DOMContentLoaded', async (e) => {
     const current_airport =  await setStartingAirport();
-    const points = 0;
-    const gameOver = false;
 
-    console.log(`You started at ${current_airport.name}`);
-
-    await getClosestAirports(current_airport);
-        
+    await getCurrentAirportWeather(current_airport);
+    await getClosestAirports(current_airport);        
 });
+
+function kelvinToCelcius(kelvin){
+    return Math.floor(kelvin - 273.15);
+}
+
+async function getCurrentAirportWeather(current_airport) {
+    const api_key = 'f806590ff13e2499734e34a745c8ee63';
+    
+    const lat = current_airport.latitude_deg;
+    const lon = current_airport.longitude_deg;
+
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}`);
+    const weather = await response.json();
+
+    const icon = weather.weather[0].icon;
+    const temp = `${kelvinToCelcius(weather.main.temp)}°C`;
+
+    tempElement.innerText = temp;
+    weatherImgElement.src = `https://openweathermap.org/img/wn/${icon}.png`;
+}
 
 async function setStartingAirport() {
     const options = ['EGKK', 'EFHK', 'LFPG', 'KJFK', 'KDFW', 'KLAX', 'WSSS'];
@@ -71,7 +106,8 @@ async function getClosestAirports(current_airport){
                         button.addEventListener('click', function () {
                             const airportName = this.getAttribute('data-airport-name');
                             console.log(`Traveling to ${airportName}. Distance: ${distance}KM, CO2 Used: ${co2_emissions}KG`);
-                            travelToAirport(airport);
+
+                            travelToAirport(airport, co2_emissions, distance);
 
                         });
                     });
@@ -83,23 +119,28 @@ async function getClosestAirports(current_airport){
     return airports;
 }   
 
-async function travelToAirport(airport){
+async function travelToAirport(airport, co2_emissions, dist){
     const conf = confirm(`Do you want to travel to ${airport.name}`);
 
     if(conf) {
+        distance += dist;
+        co2_consumed += co2_emissions;
+
+        distanceElement.innerText = `${distance}KM`;
+        CO2Element.innerText = `${co2_consumed}KG`;
+
         airportMarkers.clearLayers();
 
-        const marker = L.marker([airport.latitude_deg, airport.longitude_deg]).
+        const marker = L.marker([airport.latitude_deg, airport.longitude_deg], {'icon': startingPointIcon}).
             addTo(map).
             bindPopup(airport.name).
             openPopup();
         airportMarkers.addLayer(marker);
 
-        // pan map to selected airport
         map.flyTo([airport.latitude_deg, airport.longitude_deg]);
         await getClosestAirports(airport);
         await showQuestion();
-
+        await getCurrentAirportWeather(airport);
     }
 }
 
@@ -115,6 +156,21 @@ function calculateCO2(distance) {
     return Math.floor(co2_emissions)
 }
 
+function checkAnswer(e){    
+    if (e.innerText === correctAnswer) {
+        totalCorrectAnswers += 1;
+        answerStreak += 1;
+        points += 50;
+        pointsElement.innerHTML = points;
+
+        questionModal.style.display = 'none';
+        
+        console.log('Correct answer');
+    } else {
+        answerStreak = 0;
+    }
+}
+
 async function getQuestions(){
     const response = await fetch(`http://127.0.0.1:3000/questions`);
     const questions = await response.json();
@@ -127,6 +183,8 @@ async function showQuestion() {
     
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
 
+    correctAnswer = randomQuestion.answer;
+
     document.getElementById("questionText").innerText = randomQuestion.question_text;
     const answers = [randomQuestion.wrong_answer, randomQuestion.answer, randomQuestion.wrong_answer2].filter(a => a);
     const answerButtons = document.getElementsByClassName("answer");
@@ -134,7 +192,7 @@ async function showQuestion() {
         answerButtons[index].innerText = answer;
     });
     
-    document.getElementById("questionModal").style.display = "block";
+    questionModal.style.display = "block";
 
 }
 
