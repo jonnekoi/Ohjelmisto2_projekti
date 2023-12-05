@@ -77,7 +77,7 @@ def get_closest_airports(lat, lon):
 
 @app.route('/questions')
 def get_questions_avatar_sql():
-    sql = "SELECT * FROM questions limit 5;"
+    sql = "SELECT * FROM questions;"
 
     cursor = db.get_conn().cursor(dictionary=True)
     cursor.execute(sql, ())

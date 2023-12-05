@@ -80,6 +80,11 @@ select {
     margin-top: 12vh;
 }
 
+#stats-box h3 {
+    padding: 0;
+    padding-top: 15px;
+    margin: 0;
+}
 
 #stats-box {
     width: 30vh;
@@ -117,4 +122,5 @@ select {
     margin-right: auto;
     z-index: 999;
     width: 50%;
+    pointer-events: none;
 }

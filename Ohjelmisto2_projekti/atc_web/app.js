@@ -24,6 +24,7 @@ let totalCorrectAnswers = 0;
 const pointsElement = document.querySelector('.stats-points-target');
 const CO2Element = document.querySelector('.stats-co2-target');
 const distanceElement = document.querySelector('.stats-distance-target');
+const streakElement = document.querySelector('.stats-streak-target');
 
 const tempElement = document.querySelector('.weather-temp-target');
 const weatherImgElement = document.querySelector('.weather-icon-target');
@@ -96,19 +97,15 @@ async function getClosestAirports(current_airport){
                             <div>
                                 <h3>${airport.name}</h3>
                                 <button class="airport-btn" data-airport-name="${airport.name}">Travel to airport</button>                            
-                                <p>DISTANCE ${distance}KM</p>
-                                <p>CO2 USED ${co2_emissions}KG</p>
+                                <p>Distance: ${distance}KM</p>
+                                <p>CO2 consumption: ${co2_emissions}KG</p>
                             </div>`);
             
             marker.on('popupopen', function (event) {
                 setTimeout(() => { // Timeout to ensure the popup's DOM is ready
                     document.querySelectorAll('.airport-btn').forEach(button => {
                         button.addEventListener('click', function () {
-                            const airportName = this.getAttribute('data-airport-name');
-                            console.log(`Traveling to ${airportName}. Distance: ${distance}KM, CO2 Used: ${co2_emissions}KG`);
-
                             travelToAirport(airport, co2_emissions, distance);
-
                         });
                     });
                 }, 1);
@@ -138,6 +135,7 @@ async function travelToAirport(airport, co2_emissions, dist){
         airportMarkers.addLayer(marker);
 
         map.flyTo([airport.latitude_deg, airport.longitude_deg]);
+
         await getClosestAirports(airport);
         await showQuestion();
         await getCurrentAirportWeather(airport);
@@ -158,16 +156,32 @@ function calculateCO2(distance) {
 
 function checkAnswer(e){    
     if (e.innerText === correctAnswer) {
+        
+        points += 50;
         totalCorrectAnswers += 1;
         answerStreak += 1;
-        points += 50;
+        
         pointsElement.innerHTML = points;
+        streakElement.innerText = answerStreak;
+
+        if (answerStreak % 3 === 0) {
+            co2_consumed *= .8; 
+
+            alert(`Your CO2 was reduced by 20%. \n Current consumption ${co2_consumed}KG`);
+
+            CO2Element.innerText = `${co2_consumed}KG`;
+        } 
 
         questionModal.style.display = 'none';
-        
-        console.log('Correct answer');
     } else {
+        alert('Wrong answer. \n Points reduced by 10%.');
+
+        points *= .9;
         answerStreak = 0;
+
+        pointsElement.innerHTML = Math.floor(points);
+        streakElement.innerText = answerStreak;
+        questionModal.style.display = 'none';
     }
 }
 
@@ -180,7 +194,6 @@ async function getQuestions(){
 
 async function showQuestion() {
     const questions = await getQuestions();
-    
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
 
     correctAnswer = randomQuestion.answer;
@@ -193,7 +206,6 @@ async function showQuestion() {
     });
     
     questionModal.style.display = "block";
-
 }
 
 const modal = document.getElementById("questionModal");
