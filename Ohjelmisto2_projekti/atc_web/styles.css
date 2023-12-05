@@ -80,6 +80,8 @@ select {
     margin-left: 3vh;
     margin-top: 12vh;
     border-radius: 12%;
+    justify-content: center;
+    display: flex;
 }
 
 #weather_box {
@@ -92,6 +94,8 @@ select {
     margin-left: 3vh;
     margin-top: 53vh;
     border-radius: 12%;
+    justify-content: center;
+    display: flex;
 }
 
 #header {
@@ -106,52 +110,17 @@ select {
 }
 
 #stats_text{
-    text-align: center;
-    font-family: Stencil;
-    font-size: 30px;
-    font-weight: bold;
+    position: absolute;
+    height: 70px;
+    width: auto;
+    display: flex;
+    justify-content: center;
 }
 
 #weather_text{
-    text-align: center;
-    font-family: Stencil;
-    font-size: 30px;
-    font-weight: bold;
-
-}
-
-#points{
-    text-align: center;
-    font-family: Stencil;
-    font-size: 20px;
-    margin-top: 80px;
-    border: 1px solid black;
-    margin-left: 60px;
-    margin-right: 60px;
-}
-
-#co2_used_text{
-    text-align: center;
-    font-family: Stencil;
-    font-size: 20px;
-    border: 1px solid black;
-    margin-left: 60px;
-    margin-right: 60px;
-}
-
-#location_text{
-    text-align: center;
-    font-family: Stencil;
-    font-size: 20px;
-    border: 1px solid black;
-    margin-left: 50px;
-    margin-right: 50px;
-}
-
-#location_target{
-    text-align: center;
-    font-family: Stencil;
-    font-size: 25px;
-    margin-left: 60px;
-    margin-right: 60px;
+    position: absolute;
+    height: 70px;
+    width: auto;
+    display: flex;
+    justify-content: center;
 }
