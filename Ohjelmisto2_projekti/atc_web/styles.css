@@ -53,9 +53,9 @@ select {
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-}
+    width: 40%;
 
+}
 .close-button {
     color: #aaa;
     float: right;
@@ -70,8 +70,6 @@ select {
     cursor: pointer;
 }
 
-
-
 #stats_box {
     width: 30vh;
     height: 35vh;
@@ -81,7 +79,7 @@ select {
     top: 0;
     margin-left: 3vh;
     margin-top: 12vh;
-    border-radius: 3%;
+    border-radius: 12%;
 }
 
 #weather_box {
@@ -93,7 +91,7 @@ select {
     top: 0;
     margin-left: 3vh;
     margin-top: 53vh;
-    border-radius: 3%;
+    border-radius: 12%;
 }
 
 #header {
@@ -110,11 +108,50 @@ select {
 #stats_text{
     text-align: center;
     font-family: Stencil;
-    font-size: 25px;
+    font-size: 30px;
+    font-weight: bold;
 }
 
 #weather_text{
     text-align: center;
     font-family: Stencil;
+    font-size: 30px;
+    font-weight: bold;
+
+}
+
+#points{
+    text-align: center;
+    font-family: Stencil;
+    font-size: 20px;
+    margin-top: 80px;
+    border: 1px solid black;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+
+#co2_used_text{
+    text-align: center;
+    font-family: Stencil;
+    font-size: 20px;
+    border: 1px solid black;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+
+#location_text{
+    text-align: center;
+    font-family: Stencil;
+    font-size: 20px;
+    border: 1px solid black;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#location_target{
+    text-align: center;
+    font-family: Stencil;
     font-size: 25px;
+    margin-left: 60px;
+    margin-right: 60px;
 }
