@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     const gameOver = false;
 
     console.log(`You started at ${current_airport.name}`);
-    await showQuestion();
 
     await getClosestAirports(current_airport);
         
@@ -73,6 +72,7 @@ async function getClosestAirports(current_airport){
                             const airportName = this.getAttribute('data-airport-name');
                             console.log(`Traveling to ${airportName}. Distance: ${distance}KM, CO2 Used: ${co2_emissions}KG`);
                             travelToAirport(airport);
+
                         });
                     });
                 }, 1);
@@ -98,6 +98,8 @@ async function travelToAirport(airport){
         // pan map to selected airport
         map.flyTo([airport.latitude_deg, airport.longitude_deg]);
         await getClosestAirports(airport);
+        await showQuestion();
+
     }
 }
 

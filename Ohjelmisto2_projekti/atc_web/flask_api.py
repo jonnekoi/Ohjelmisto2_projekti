@@ -73,6 +73,7 @@ def get_closest_airports(lat, lon):
     result = cursor.fetchall()
     return json.dumps(result)
 
+
 @app.route('/questions')
 def get_questions_avatar_sql():
     sql = "SELECT * FROM questions limit 5;"
@@ -81,8 +82,6 @@ def get_questions_avatar_sql():
     cursor.execute(sql, ())
     result = cursor.fetchall()
     return json.dumps(result)
-
-
 
 
 if __name__ == '__main__':
