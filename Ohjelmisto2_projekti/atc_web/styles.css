@@ -70,28 +70,51 @@ select {
     cursor: pointer;
 }
 
+
+
 #stats_box {
-    width: 15vh;
-    height: 30vh;
-    background-color: lightgrey;
+    width: 30vh;
+    height: 35vh;
+    background-color: white;
     position: absolute;
     z-index: 999;
     top: 0;
-    padding-left: 10vh;
     margin-left: 3vh;
-    margin-top: 9vh;
+    margin-top: 12vh;
     border-radius: 3%;
 }
 
 #weather_box {
-    width: 15vh;
-    height: 30vh;
-    background-color: lightgrey;
+    width: 30vh;
+    height: 35vh;
+    background-color: white;
     position: absolute;
     z-index: 999;
     top: 0;
-    padding-left: 10vh;
     margin-left: 3vh;
-    margin-top: 45vh;
+    margin-top: 53vh;
     border-radius: 3%;
+}
+
+#header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 999;
+    width: 50%;
+}
+
+#stats_text{
+    text-align: center;
+    font-family: Stencil;
+    font-size: 25px;
+}
+
+#weather_text{
+    text-align: center;
+    font-family: Stencil;
+    font-size: 25px;
 }
