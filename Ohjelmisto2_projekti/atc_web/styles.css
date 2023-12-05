@@ -69,3 +69,29 @@ select {
     text-decoration: none;
     cursor: pointer;
 }
+
+#stats_box {
+    width: 15vh;
+    height: 30vh;
+    background-color: lightgrey;
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    padding-left: 10vh;
+    margin-left: 3vh;
+    margin-top: 9vh;
+    border-radius: 3%;
+}
+
+#weather_box {
+    width: 15vh;
+    height: 30vh;
+    background-color: lightgrey;
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    padding-left: 10vh;
+    margin-left: 3vh;
+    margin-top: 45vh;
+    border-radius: 3%;
+}
