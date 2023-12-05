@@ -6,7 +6,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const airportMarkers = L.featureGroup().addTo(map);
 
 const startingPointIcon = L.icon({
-    iconUrl: '/icons/starting_point.png', // Replace with the path to your icon image
+    iconUrl: 'icons/starting_point.png', // Replace with the path to your icon image
     iconSize: [41, 41], // Size of the icon. This is the default size for Leaflet's marker icon.
     iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location.
     popupAnchor: [8, -41] // Point from which the popup should open relative to the iconAnchor.
