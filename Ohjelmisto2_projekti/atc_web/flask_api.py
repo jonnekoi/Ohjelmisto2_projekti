@@ -84,6 +84,17 @@ def get_questions_avatar_sql():
     result = cursor.fetchall()
     return json.dumps(result)
 
+@app.route('/scoreboard')
+def get_scoreboard():
+    sql = 'SELECT * FROM scoreboard ORDER BY `co2_emissions` DESC;'
+
+    cursor = db.get_conn().cursor(dictionary=True)
+    cursor.execute(sql, ())
+    result = cursor.fetchall()
+    return json.dumps(result)
+
+
+
 
 if __name__ == '__main__':
     app.run(use_reloader=True, host='127.0.0.1', port=3000)

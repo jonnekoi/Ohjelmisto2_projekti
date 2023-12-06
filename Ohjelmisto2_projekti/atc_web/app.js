@@ -1,4 +1,4 @@
-const map = L.map('map').setView([60.23, 24.74], 5);
+const map = L.map('map').setView([60.23, 24.74], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
@@ -21,6 +21,8 @@ let distance = 0;
 let answerStreak = 0;
 let totalCorrectAnswers = 0;
 
+const leaderboardBody = document.querySelector('#leaderboard-rows');
+
 const pointsElement = document.querySelector('.stats-points-target');
 const CO2Element = document.querySelector('.stats-co2-target');
 const distanceElement = document.querySelector('.stats-distance-target');
@@ -33,6 +35,18 @@ const questionModal = document.getElementById("questionModal");
 
 
 document.addEventListener('DOMContentLoaded', async (e) => {
+
+    const leaderboardData = await getScoreboard();
+    leaderboardData.forEach((item, index) => {
+        const row = `<tr>
+                        <td>${index + 1}</td>
+                        <td>${item.player}</td>
+                        <td>${item.co2_emissions}</td> 
+                     </tr>`;
+        leaderboardBody.innerHTML += row;
+    });
+
+
     const current_airport =  await setStartingAirport();
 
     await getCurrentAirportWeather(current_airport);
@@ -124,7 +138,7 @@ async function travelToAirport(airport, co2_emissions, dist){
         co2_consumed += co2_emissions;
 
         distanceElement.innerText = `${distance}KM`;
-        CO2Element.innerText = `${co2_consumed}KG`;
+        CO2Element.innerText = `${Math.floor(co2_consumed)}KG`;
 
         airportMarkers.clearLayers();
 
@@ -154,35 +168,85 @@ function calculateCO2(distance) {
     return Math.floor(co2_emissions)
 }
 
-function checkAnswer(e){    
+async function getScoreboard() {
+    const response = await fetch(`http://127.0.0.1:3000/scoreboard`);
+    const scoreboard = await response.json();
+
+    return scoreboard;
+}
+
+function checkAnswer(e){   
+    const answerElement = document.querySelector('.correct-co2');
+    const animationDiv = document.getElementById("correctAnswerAnimation");
+
     if (e.innerText === correctAnswer) {
+        questionModal.style.display = 'none';
+        
+        animationDiv.style.backgroundColor = 'rgba(9, 83, 139, 0.7)';
+        pointsElement.innerHTML = points;
+        streakElement.innerText = answerStreak;
+        
         
         points += 50;
         totalCorrectAnswers += 1;
         answerStreak += 1;
-        
-        pointsElement.innerHTML = points;
-        streakElement.innerText = answerStreak;
 
+        pointsElement.innerHTML = Math.floor(points);
+        streakElement.innerText = answerStreak;
+        
         if (answerStreak % 3 === 0) {
             co2_consumed *= .8; 
+            
+            
+            answerElement.innerText = `Your CO2 was reduced by 20%. \n Current consumption ${Math.floor(co2_consumed)}KG`;
+            animationDiv.style.display = 'block';
+            animationDiv.style.opacity = 1;
+            animationDiv.style.animation = "fadeInOut 8s ease-in-out";
 
-            alert(`Your CO2 was reduced by 20%. \n Current consumption ${co2_consumed}KG`);
+            // Hide the animation after 3 seconds
+            setTimeout(() => {
+                animationDiv.style.opacity = 0;
+                animationDiv.style.animation = 'none';
+            }, 8000);
+            
+        } else {
 
-            CO2Element.innerText = `${co2_consumed}KG`;
+            answerElement.innerText = 'Correct answer. \n +50 points.'
+            animationDiv.style.display = 'block';
+            animationDiv.style.opacity = 1;
+            animationDiv.style.animation = "fadeInOut 6s ease-in-out";
+
+            // Hide the animation after 3 seconds
+            setTimeout(() => {
+                animationDiv.style.opacity = 0;
+                animationDiv.style.animation = 'none';
+            }, 6000);
         } 
 
-        questionModal.style.display = 'none';
+        
     } else {
-        alert('Wrong answer. \n Points reduced by 10%.');
+        questionModal.style.display = 'none';
+
+        answerElement.innerText = 'Wrong answer. \n Points reduced by 10%.'
+        animationDiv.style.backgroundColor = 'rgba(255, 72, 0, 0.7)';
+
+        animationDiv.style.display = 'block';
+            animationDiv.style.opacity = 1;
+            animationDiv.style.animation = "fadeInOut 6s ease-in-out";
+
+            // Hide the animation after 3 seconds
+            setTimeout(() => {
+                animationDiv.style.opacity = 0;
+                animationDiv.style.animation = 'none';
+            }, 6000);
 
         points *= .9;
         answerStreak = 0;
 
-        pointsElement.innerHTML = Math.floor(points);
-        streakElement.innerText = answerStreak;
-        questionModal.style.display = 'none';
+        
+        
     }
+    
 }
 
 async function getQuestions(){
@@ -194,6 +258,7 @@ async function getQuestions(){
 
 async function showQuestion() {
     const questions = await getQuestions();
+    console.log(questions);
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
 
     correctAnswer = randomQuestion.answer;
