@@ -93,8 +93,14 @@ def get_scoreboard():
     result = cursor.fetchall()
     return json.dumps(result)
 
+@app.route('/player/setScore/<name>/<co2>/<distance>')
+def set_player_score(name, co2, distance):
+    sql = 'INSERT INTO scoreboard (player, co2_emissions, distance) VALUES (%s, %s, %s);' 
 
-
+    cursor = db.get_conn().cursor(dictionary=True)
+    cursor.execute(sql, (name, co2, distance))
+    result = cursor.lastrowid
+    return json.dumps(result)
 
 if __name__ == '__main__':
     app.run(use_reloader=True, host='127.0.0.1', port=3000)

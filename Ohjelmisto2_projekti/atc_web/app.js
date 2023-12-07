@@ -1,4 +1,4 @@
-const map = L.map('map').setView([60.23, 24.74], 7);
+const map = L.map('map').setView([60.23, 24.74], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
@@ -12,14 +12,17 @@ const startingPointIcon = L.icon({
     popupAnchor: [8, -41] // Point from which the popup should open relative to the iconAnchor.
 });
 
-let correctAnswer = "";
+let questions;
 
+let correctAnswer = "";
+let answerStreak = 0;
+let totalCorrectAnswers = 0;
+
+
+let playerName;
 let points = 0;
 let co2_consumed = 0;
 let distance = 0;
-
-let answerStreak = 0;
-let totalCorrectAnswers = 0;
 
 const leaderboardBody = document.querySelector('#leaderboard-rows');
 
@@ -35,6 +38,10 @@ const questionModal = document.getElementById("questionModal");
 
 
 document.addEventListener('DOMContentLoaded', async (e) => {
+
+    playerName = prompt('Enter your name: ');
+
+    questions = await getQuestions();
 
     const leaderboardData = await getScoreboard();
     leaderboardData.forEach((item, index) => {
@@ -75,11 +82,11 @@ async function getCurrentAirportWeather(current_airport) {
 
 async function setStartingAirport() {
     const options = ['EGKK', 'EFHK', 'LFPG', 'KJFK', 'KDFW', 'KLAX', 'WSSS'];
-    const random_icao = options[Math.floor(Math.random() * options.length)];
+    const icao = options[Math.floor(Math.random() * options.length)];
 
     airportMarkers.clearLayers();
 
-    const response = await fetch('http://127.0.0.1:3000/airport/' + random_icao);
+    const response = await fetch('http://127.0.0.1:3000/airport/' + icao);
     const airport = await response.json();
 
     const marker = L.marker([airport.latitude_deg, airport.longitude_deg], {'icon': startingPointIcon}).
@@ -175,17 +182,19 @@ async function getScoreboard() {
     return scoreboard;
 }
 
-function checkAnswer(e){   
+async function checkAnswer(e){   
     const answerElement = document.querySelector('.correct-co2');
     const animationDiv = document.getElementById("correctAnswerAnimation");
 
+
     if (e.innerText === correctAnswer) {
+
         questionModal.style.display = 'none';
         
         animationDiv.style.backgroundColor = 'rgba(9, 83, 139, 0.7)';
         pointsElement.innerHTML = points;
         streakElement.innerText = answerStreak;
-        
+
         
         points += 50;
         totalCorrectAnswers += 1;
@@ -193,10 +202,9 @@ function checkAnswer(e){
 
         pointsElement.innerHTML = Math.floor(points);
         streakElement.innerText = answerStreak;
-        
+       
         if (answerStreak % 3 === 0) {
             co2_consumed *= .8; 
-            
             
             answerElement.innerText = `Your CO2 was reduced by 20%. \n Current consumption ${Math.floor(co2_consumed)}KG`;
             animationDiv.style.display = 'block';
@@ -221,9 +229,7 @@ function checkAnswer(e){
                 animationDiv.style.opacity = 0;
                 animationDiv.style.animation = 'none';
             }, 6000);
-        } 
-
-        
+        }   
     } else {
         questionModal.style.display = 'none';
 
@@ -231,8 +237,8 @@ function checkAnswer(e){
         animationDiv.style.backgroundColor = 'rgba(255, 72, 0, 0.7)';
 
         animationDiv.style.display = 'block';
-            animationDiv.style.opacity = 1;
-            animationDiv.style.animation = "fadeInOut 6s ease-in-out";
+        animationDiv.style.opacity = 1;
+        animationDiv.style.animation = "fadeInOut 6s ease-in-out";
 
             // Hide the animation after 3 seconds
             setTimeout(() => {
@@ -241,12 +247,24 @@ function checkAnswer(e){
             }, 6000);
 
         points *= .9;
-        answerStreak = 0;
-
-        
+        answerStreak = 0;  
         
     }
+
+    if (points >= 300) {
+        alert('You won! \n Check if you reached the top of the leaderboard.');
+        await setPlayerScore(playerName, co2_consumed, distance);
+    }
     
+}
+
+async function setPlayerScore(name, co2, distance){
+    const response = await fetch(`http://127.0.0.1:3000/player/setScore/${name}/${co2}/${distance}`);
+    const result = await response.json();
+
+    console.log('set score: ',result);
+
+    return result;
 }
 
 async function getQuestions(){
@@ -257,8 +275,7 @@ async function getQuestions(){
 }
 
 async function showQuestion() {
-    const questions = await getQuestions();
-    console.log(questions);
+    
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
 
     correctAnswer = randomQuestion.answer;
