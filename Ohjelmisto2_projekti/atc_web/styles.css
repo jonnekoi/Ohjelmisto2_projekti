@@ -86,12 +86,12 @@ select {
 
 #stats-box h3 {
     padding: 0;
-    padding-top: 15px;
+    padding-top: 1vh;
     margin: 0;
 }
 
 #info-box {
-    height: 25%; 
+    height: 25vh; 
     background-color: rgba(135, 206, 250, 0.6);
     margin-top: 1vh;
     margin-left: 3vh;
@@ -102,6 +102,7 @@ select {
 
 .info-button {
     cursor: pointer;
+    width: 80%;
     margin: auto;
     background-color: rgb(92, 165, 210);
     border-radius: 40%;
@@ -113,7 +114,8 @@ select {
 }
 
 #stats-box {
-    height: 25%; 
+    height: 25vh; 
+    font-size: 1.5vh;
     background-color: rgba(135, 206, 250, 0.6);
     color: black;
     margin-left: 3vh;
@@ -125,7 +127,8 @@ select {
 }
 
 #weather-box {
-    height: 25%; 
+    height: 25vh; 
+    font-size: 1.5vh;
     background-color: rgba(135, 206, 250, 0.6);
     margin-left: 3vh;
     margin-top: 1vh;
@@ -136,11 +139,12 @@ select {
 } 
 
 .scoreboard-box {
-    width: auto;
-    height: 25%;
+    /* width: auto; */
+    font-size: 1.5vh;
+    height: 25vh;
     background-color: rgba(135, 206, 250, 0.6);
     margin-left: 3vh;
-    margin-top: 1vh;
+    margin-top: 10px;
     border-radius: 12%;
     display: flex;
     flex-direction: column;
@@ -220,3 +224,56 @@ select {
     right: 10px;
     cursor: pointer;
 }
+
+
+/* AIRPORT/TRAVEL POPUP */
+
+.leaflet-popup-content-wrapper {
+    margin: 0 !important;
+    background-color: lightskyblue;
+}
+
+
+.airport-btn {
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10rem;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 0.15rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .airport-btn:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0cf;
+    border-radius: 10rem;
+    z-index: -2;
+  }
+  .airport-btn:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #008fb3;
+    transition: all 0.3s;
+    border-radius: 10rem;
+    z-index: -1;
+  }
+  .airport-btn:hover {
+    color: #fff;
+    cursor: pointer;
+  }
+  .airport-btn:hover:before {
+    width: 100%;
+  }

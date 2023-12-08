@@ -120,6 +120,7 @@ async function getCurrentAirportWeather(current_airport) {
 }
 
 async function setStartingAirport() {
+    const africa = [''];
     const options = ['EGKK', 'EFHK', 'LFPG', 'KJFK', 'KDFW', 'KLAX', 'WSSS'];
     const icao = options[Math.floor(Math.random() * options.length)];
 
@@ -154,9 +155,9 @@ async function getClosestAirports(current_airport){
             const marker = L.marker([airport.latitude_deg, airport.longitude_deg])
                 .addTo(map)
                 .bindPopup(`
-                            <div>
+                            <div id="travelPopup">
                                 <h3>${airport.name}</h3>
-                                <button class="airport-btn" data-airport-name="${airport.name}">Travel to airport</button>                            
+                                <a class="airport-btn" data-airport-name="${airport.name}">Travel to airport</a>                            
                                 <p>Distance: ${distance}KM</p>
                                 <p>CO2 consumption: ${co2_emissions}KG</p>
                             </div>`);
@@ -293,18 +294,10 @@ async function checkAnswer(e){
         
     }
 
-    if (points >= 300) {
+    if (points >= 100) {
+        await fetch(`http://127.0.0.1:3000/player/setScore/${playerName}/${co2_consumed}/${distance}`);
         alert('You won! \n Check if you reached the top of the leaderboard.');
-        await setPlayerScore(playerName, co2_consumed, distance);
     }
-    
-}
-
-async function setPlayerScore(name, co2, distance){
-    const response = await fetch(`http://127.0.0.1:3000/player/setScore/${name}/${co2}/${distance}`);
-    const result = await response.json();
-
-    return result;
 }
 
 async function getQuestions(){
