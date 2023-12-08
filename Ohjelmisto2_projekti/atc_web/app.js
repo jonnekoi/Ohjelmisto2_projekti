@@ -29,6 +29,9 @@ const streakElement = document.querySelector('.stats-streak-target');
 const tempElement = document.querySelector('.weather-temp-target');
 const weatherImgElement = document.querySelector('.weather-icon-target');
 
+const infoButton = document.querySelector('.info-button');
+const popup = document.querySelector('.popup');
+
 const questionModal = document.getElementById("questionModal");
 
 
@@ -213,3 +216,11 @@ const closeButton = document.getElementsByClassName("close-button")[0];
 closeButton.onclick = function() {
     modal.style.display = "none";
 };
+
+infoButton.addEventListener('click', () => {
+  popup.style.display = 'block';
+});
+
+function closePopup() {
+  popup.style.display = 'none';
+}
