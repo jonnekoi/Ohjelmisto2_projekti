@@ -40,6 +40,9 @@ const nameForm = document.querySelector('#nameForm')
 
 const questionModal = document.getElementById("questionModal");
 
+const infoButton = document.querySelector('.info-button');
+const popup = document.querySelector('.popup');
+
 
 document.addEventListener('DOMContentLoaded', async (e) => {
 
@@ -340,3 +343,11 @@ const closeButton = document.getElementsByClassName("close-button")[0];
 closeButton.onclick = function() {
     modal.style.display = "none";
 };
+
+infoButton.addEventListener('click', () => {
+  popup.style.display = 'block';
+});
+
+function closePopup() {
+  popup.style.display = 'none';
+}
