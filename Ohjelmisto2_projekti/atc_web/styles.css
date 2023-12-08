@@ -162,3 +162,21 @@ select {
     0%, 100% { opacity: 0; }
     50% { opacity: 1; }
 }
+
+#nameForm {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    background-color: lightskyblue;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    display: block;
+    pointer-events: auto;
+    align-items: center;
+    text-align: center;
+    animation: fadeOut 1s ease-out forwards;
+}
+
+

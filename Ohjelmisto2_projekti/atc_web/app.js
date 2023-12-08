@@ -24,6 +24,8 @@ let points = 0;
 let co2_consumed = 0;
 let distance = 0;
 
+
+
 const leaderboardBody = document.querySelector('#leaderboard-rows');
 
 const pointsElement = document.querySelector('.stats-points-target');
@@ -34,12 +36,14 @@ const streakElement = document.querySelector('.stats-streak-target');
 const tempElement = document.querySelector('.weather-temp-target');
 const weatherImgElement = document.querySelector('.weather-icon-target');
 
+const nameForm = document.querySelector('#nameForm')
+
 const questionModal = document.getElementById("questionModal");
 
 
 document.addEventListener('DOMContentLoaded', async (e) => {
 
-    playerName = prompt('Enter your name: ');
+    // playerName = prompt('Enter your name: ');
 
     questions = await getQuestions();
 
@@ -59,6 +63,44 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     await getCurrentAirportWeather(current_airport);
     await getClosestAirports(current_airport);        
 });
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const nameButton = document.querySelector('#nameButton');
+    const nameInput = document.getElementById('name');
+
+    // Click event listener
+    nameButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        handleFormSubmission();
+    });
+
+    // Enter key press event listener
+    nameInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleFormSubmission();
+        }
+    });
+
+
+    function handleFormSubmission() {
+        playerName = nameInput.value;
+
+        // Fade out animation
+        nameForm.style.transition = 'opacity 1s';
+        nameForm.style.opacity = 0;
+        console.log(playerName);
+
+
+
+        // Hide the form after submission
+        setTimeout(function () {
+            nameForm.style.display = 'none';
+        }, 1000);}
+});
+
 
 function kelvinToCelcius(kelvin){
     return Math.floor(kelvin - 273.15);
@@ -162,6 +204,9 @@ async function travelToAirport(airport, co2_emissions, dist){
         await getCurrentAirportWeather(airport);
     }
 }
+
+
+
 
 function calculateCO2(distance) {
     const fuel_burn_per_hour = 500; 
