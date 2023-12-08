@@ -8,39 +8,7 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
-# @app.route('/continents')
-# def continents():
-#     sql = f'''SELECT DISTINCT continent
-#               FROM country'''
-#     cursor = db.get_conn().cursor(dictionary=True)
-#     cursor.execute(sql)
-#     result = cursor.fetchall()
-#     return json.dumps(result)
-
-
-# @app.route('/countries/<continent>')    
-# def countries_by_continent(continent):
-#     sql = f'''SELECT iso_country, name
-#               FROM country
-#               WHERE continent = %s'''
-#     cursor = db.get_conn().cursor(dictionary=True)
-#     cursor.execute(sql, (continent,))
-#     result = cursor.fetchall()
-#     return json.dumps(result)
-
-
-# @app.route('/airports/<country>')
-# def airports_by_country(country):
-#     sql = f'''SELECT ident, name, latitude_deg, longitude_deg
-#               FROM airport
-#               WHERE iso_country = %s'''
-#     cursor = db.get_conn().cursor(dictionary=True)
-#     cursor.execute(sql, (country,))
-#     result = cursor.fetchall()
-#     return json.dumps(result)
-
-
+# ROUTES
 @app.route('/airport/<icao>')
 def airport(icao):
     sql = f'''SELECT name, latitude_deg, longitude_deg
@@ -54,7 +22,7 @@ def airport(icao):
 @app.route('/airport/closest/<lat>/<lon>')
 def get_closest_airports(lat, lon):
     sql = f'''
-    SELECT name, ident, iso_country, id, latitude_deg, longitude_deg,
+        SELECT name, ident, iso_country, id, latitude_deg, longitude_deg,
             6371 * ACOS(
                 COS(RADIANS(%s)) * COS(RADIANS(latitude_deg)) 
                 * COS(RADIANS(%s - longitude_deg)) +
@@ -73,11 +41,9 @@ def get_closest_airports(lat, lon):
     result = cursor.fetchall()
     return json.dumps(result)
 
-
 @app.route('/questions')
 def get_questions_avatar_sql():
     sql = "SELECT * FROM questions;"
-
     cursor = db.get_conn().cursor(dictionary=True)
     cursor.execute(sql, ())
     result = cursor.fetchall()
@@ -86,7 +52,6 @@ def get_questions_avatar_sql():
 @app.route('/scoreboard')
 def get_scoreboard():
     sql = 'SELECT * FROM scoreboard ORDER BY `co2_emissions` DESC;'
-
     cursor = db.get_conn().cursor(dictionary=True)
     cursor.execute(sql, ())
     result = cursor.fetchall()
@@ -95,7 +60,6 @@ def get_scoreboard():
 @app.route('/player/setScore/<name>/<co2>/<distance>')
 def set_player_score(name, co2, distance):
     sql = 'INSERT INTO scoreboard (player, co2_emissions, distance) VALUES (%s, %s, %s);' 
-
     cursor = db.get_conn().cursor(dictionary=True)
     cursor.execute(sql, (name, co2, distance))
     result = cursor.lastrowid
@@ -103,5 +67,3 @@ def set_player_score(name, co2, distance):
 
 if __name__ == '__main__':
     app.run(use_reloader=True, host='127.0.0.1', port=3000)
-
-# inputs and prints are moved to web page

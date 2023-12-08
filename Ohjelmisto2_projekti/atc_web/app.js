@@ -36,7 +36,7 @@ const streakElement = document.querySelector('.stats-streak-target');
 const tempElement = document.querySelector('.weather-temp-target');
 const weatherImgElement = document.querySelector('.weather-icon-target');
 
-const nameForm = document.querySelector('#nameForm')
+const nameForm = document.querySelector('#nameForm');
 
 const questionModal = document.getElementById("questionModal");
 
@@ -45,9 +45,6 @@ const popup = document.querySelector('.popup');
 
 
 document.addEventListener('DOMContentLoaded', async (e) => {
-
-    // playerName = prompt('Enter your name: ');
-
     questions = await getQuestions();
 
     const leaderboardData = await getScoreboard();
@@ -94,9 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Fade out animation
         nameForm.style.transition = 'opacity 1s';
         nameForm.style.opacity = 0;
-        console.log(playerName);
-
-
 
         // Hide the form after submission
         setTimeout(function () {
@@ -309,8 +303,6 @@ async function checkAnswer(e){
 async function setPlayerScore(name, co2, distance){
     const response = await fetch(`http://127.0.0.1:3000/player/setScore/${name}/${co2}/${distance}`);
     const result = await response.json();
-
-    console.log('set score: ',result);
 
     return result;
 }
