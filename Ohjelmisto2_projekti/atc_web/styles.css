@@ -105,7 +105,7 @@ select {
     margin: auto;
     background-color: rgb(92, 165, 210);
     border-radius: 40%;
-    padding: 15%;
+    padding: 10%;
 }
 
 .info-button:hover {
