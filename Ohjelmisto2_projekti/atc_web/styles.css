@@ -91,7 +91,7 @@ select {
 }
 
 #info-box {
-    height: 25vh; 
+    height: 25vh;
     background-color: rgba(135, 206, 250, 0.6);
     margin-top: 1vh;
     margin-left: 3vh;
@@ -104,13 +104,13 @@ select {
     cursor: pointer;
     width: 80%;
     margin: auto;
-    background-color: rgb(92, 165, 210);
     border-radius: 40%;
     padding: 10%;
 }
 
 .info-button:hover {
-    background-color: white;
+    filter: drop-shadow(15px 20px 20px white) drop-shadow(-15px -20px 20px white);
+
 }
 
 #stats-box {
