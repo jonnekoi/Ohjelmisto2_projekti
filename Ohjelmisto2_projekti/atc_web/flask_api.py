@@ -2,7 +2,6 @@ import json
 from flask import Flask
 from db import Database
 from flask_cors import CORS
-import requests
 
 db = Database()
 app = Flask(__name__)
@@ -84,6 +83,23 @@ def get_questions_avatar_sql():
     result = cursor.fetchall()
     return json.dumps(result)
 
+@app.route('/scoreboard')
+def get_scoreboard():
+    sql = 'SELECT * FROM scoreboard ORDER BY `co2_emissions` DESC;'
+
+    cursor = db.get_conn().cursor(dictionary=True)
+    cursor.execute(sql, ())
+    result = cursor.fetchall()
+    return json.dumps(result)
+
+@app.route('/player/setScore/<name>/<co2>/<distance>')
+def set_player_score(name, co2, distance):
+    sql = 'INSERT INTO scoreboard (player, co2_emissions, distance) VALUES (%s, %s, %s);' 
+
+    cursor = db.get_conn().cursor(dictionary=True)
+    cursor.execute(sql, (name, co2, distance))
+    result = cursor.lastrowid
+    return json.dumps(result)
 
 if __name__ == '__main__':
     app.run(use_reloader=True, host='127.0.0.1', port=3000)

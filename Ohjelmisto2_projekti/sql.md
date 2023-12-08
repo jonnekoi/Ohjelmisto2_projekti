@@ -37,6 +37,12 @@ ALTER TABLE country DROP COLUMN keywords;
 ALTER TABLE country DROP COLUMN wikipedia_link;
 ALTER TABLE player ADD avatar_id INT NOT NULL DEFAULT(0);
 
+CREATE TABLE scoreboard (
+     player VARCHAR (200) NOT NULL,
+     co2_emissions int NOT NULL,
+     distance int not null
+);
+
 -- Create the 'questions' table
 CREATE TABLE questions (
      question_text VARCHAR(500) NOT NULL,

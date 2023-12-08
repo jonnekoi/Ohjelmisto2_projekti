@@ -70,13 +70,13 @@ select {
     cursor: pointer;
 }
 
-
 .sidebar {
+    display: flexbox;
     z-index: 999;
     position: absolute;
     top: 0;
     margin-left: 3vh;
-    margin-top: 12vh;
+    /* margin-top: 12vh; */
 }
 
 #stats-box h3 {
@@ -87,10 +87,11 @@ select {
 
 #stats-box {
     width: 30vh;
-    height: 35vh;
+    height: 30vh;
     background-color: lightskyblue;
     color: black;
     top: 0;
+    margin-top: 1vh;
     margin-left: 3vh;
     border-radius: 12%;
     display: flex;
@@ -100,17 +101,33 @@ select {
 
 #weather-box {
     width: 30vh;
-    height: 35vh;
+    height: 30vh;
     background-color: lightskyblue;
     top: 0;
     margin-left: 3vh;
-    margin-top: 5vh;
+    margin-top: 1vh;
     border-radius: 12%;
     display: flex;
     flex-direction: column;
     text-align: center;
 } 
 
+.scoreboard-box {
+    width: 30vh;
+    height: 30vh;
+    background-color: lightskyblue;
+    top: 0;
+    margin-left: 3vh;
+    margin-top: 2vh;
+    border-radius: 12%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.scoreboard-box p {
+    margin: 1vh;
+}
 
 #game-title {
     position: absolute;
@@ -124,28 +141,42 @@ select {
     pointer-events: none;
 }
 
-.info-button{
-    display: flex;
-    margin-left: 6vh;
-    cursor: pointer;
-}
-
-
-.popup {
+/* Animation Container Styling */
+.animation-container {
     display: none;
-    position: fixed;
-    top: 50%;
+    pointer-events: none;
+    position: absolute;
+    top: 25%; 
     left: 50%;
+    background-color: rgba(255, 72, 0, 0.7,);
     transform: translate(-50%, -50%);
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 999;
+    border-radius: 10px;
+    opacity: 0; /* Start invisible */
+    transition: opacity 0.5s; /* Fade effect */
+    z-index: 1000; /* Ensure it's above the map */
 }
 
-.closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
+/* Keyframes for fade-in and fade-out */
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
 }
+
+#nameForm {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    background-color: lightskyblue;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    display: block;
+    pointer-events: auto;
+    align-items: center;
+    text-align: center;
+    animation: fadeOut 1s ease-out forwards;
+}
+
+
