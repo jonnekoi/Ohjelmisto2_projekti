@@ -27,15 +27,19 @@ ALTER TABLE airport DROP COLUMN home_link;
 ALTER TABLE airport DROP COLUMN keywords;
 ALTER TABLE airport DROP COLUMN wikipedia_link;
 
-ALTER TABLE game DROP COLUMN co2_budget;
-ALTER TABLE game CHANGE COLUMN `screen_name` `name` VARCHAR(255);
-ALTER TABLE game ADD budget INT NOT NULL DEFAULT(0);
-ALTER TABLE game CHANGE COLUMN `location` `current_airport` VARCHAR(10);
-ALTER TABLE game RENAME player;
-
 ALTER TABLE country DROP COLUMN keywords;
 ALTER TABLE country DROP COLUMN wikipedia_link;
-ALTER TABLE player ADD avatar_id INT NOT NULL DEFAULT(0);
+
+ALTER TABLE game RENAME player;
+CREATE TABLE player (
+    co2_consumed INT(8),
+    current_airport VARCHAR(10),
+    name VARCHAR(255),
+    distance_traveled INT(11),
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+);
+
 
 CREATE TABLE scoreboard (
      player VARCHAR (200) NOT NULL,
