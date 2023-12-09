@@ -23,13 +23,22 @@
     </div>
 </div>
 
-<form id="nameForm">
-    <label for="name">Player name:</label>
-    <br><br>
-    <input type="text" id="name" required>
-    <br><br>
-    <input id="nameButton" type="button" value="Submit">
-</form>
+<div id="startWrapper">
+    <form id="nameForm">
+        <label for="nameInput">Player name:</label>
+        <input type="text" id="nameInput" required>
+        <label for="startContinents">Choose a continent:</label>
+        <select name="startContinents" id="startContinents">
+            <option value="af">Africa</option>
+            <option value="as">Asia</option>
+            <option value="eu">Europe</option>
+            <option value="na">North America</option>
+            <option value="oc">Oceania</option>
+            <option value="sa">South America</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+</div>
 
 <div id="correctAnswerAnimation" class="animation-container">
     <img hidden src="icons/correct-answer.png" alt="correct answer text">

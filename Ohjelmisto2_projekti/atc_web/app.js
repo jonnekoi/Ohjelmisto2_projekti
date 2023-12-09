@@ -4,9 +4,7 @@ const map = L.map('map').setView([60.23, 24.74], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
-
 const airportMarkers = L.featureGroup().addTo(map);
-
 const startingPointIcon = L.icon({
     iconUrl: 'icons/starting_point.png', // Replace with the path to your icon image
     iconSize: [41, 41], // Size of the icon. This is the default size for Leaflet's marker icon.
@@ -14,39 +12,46 @@ const startingPointIcon = L.icon({
     popupAnchor: [8, -41] // Point from which the popup should open relative to the iconAnchor.
 });
 
-let questions;
 
+
+let questions;
 let correctAnswer = "";
 let answerStreak = 0;
 let totalCorrectAnswers = 0;
-
-
 let playerName;
 let points = 0;
 let co2_consumed = 0;
 let distance = 0;
 
-
-
 const leaderboardBody = document.querySelector('#leaderboard-rows');
-
 const pointsElement = document.querySelector('.stats-points-target');
 const CO2Element = document.querySelector('.stats-co2-target');
 const distanceElement = document.querySelector('.stats-distance-target');
 const streakElement = document.querySelector('.stats-streak-target');
-
 const tempElement = document.querySelector('.weather-temp-target');
 const weatherImgElement = document.querySelector('.weather-icon-target');
 
+const nameInput = document.querySelector('#nameInput');
 const nameForm = document.querySelector('#nameForm');
 
-const questionModal = document.getElementById("questionModal");
-
+const questionModal = document.querySelector("#questionModal");
 const infoButton = document.querySelector('.info-button');
 const popup = document.querySelector('.popup');
 
 
 document.addEventListener('DOMContentLoaded', async (e) => {
+
+    nameForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        handleFormSubmission();
+
+        const continent = document.querySelector('#startContinents').value; 
+        const current_airport =  await setStartingAirport(continent);
+
+        await getCurrentAirportWeather(current_airport);
+        await getClosestAirports(current_airport);    
+    });
+
     questions = await getQuestions();
 
     const leaderboardData = await getScoreboard();
@@ -59,47 +64,29 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         leaderboardBody.innerHTML += row;
     });
 
-
-    const current_airport =  await setStartingAirport();
-
-    await getCurrentAirportWeather(current_airport);
-    await getClosestAirports(current_airport);        
+        
 });
 
 
+function handleFormSubmission() {
+    playerName = nameInput.value;
+    
+    const elements = document.getElementsByTagName('div');
 
-document.addEventListener('DOMContentLoaded', function () {
-    const nameButton = document.querySelector('#nameButton');
-    const nameInput = document.getElementById('name');
+    for(const element of elements) {
+        element.style.pointerEvents = 'auto';
 
-    // Click event listener
-    nameButton.addEventListener('submit', function (event) {
-        event.preventDefault();
-        handleFormSubmission();
-    });
+    }
 
-    // Enter key press event listener
-   /* nameInput.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            handleFormSubmission();
-        }
-    });
-     */
+    // Fade out animation
+    nameForm.style.transition = 'opacity 1s';
+    nameForm.style.opacity = 0;
 
-
-    function handleFormSubmission() {
-        playerName = nameInput.value;
-
-        // Fade out animation
-        nameForm.style.transition = 'opacity 1s';
-        nameForm.style.opacity = 0;
-
-        // Hide the form after submission
-        setTimeout(function () {
-            nameForm.style.display = 'none';
-        }, 1000);}
-});
+    // Hide the form after submission
+    setTimeout(function () {
+        nameForm.style.display = 'none';
+    }, 1000);
+}
 
 
 function kelvinToCelcius(kelvin){
@@ -122,10 +109,39 @@ async function getCurrentAirportWeather(current_airport) {
     weatherImgElement.src = `https://openweathermap.org/img/wn/${icon}.png`;
 }
 
-async function setStartingAirport() {
-    const africa = [''];
-    const options = ['EGKK', 'EFHK', 'LFPG', 'KJFK', 'KDFW', 'KLAX', 'WSSS'];
-    const icao = options[Math.floor(Math.random() * options.length)];
+async function setStartingAirport(continent) {
+
+    let icao;
+
+    const africa = ['FAOR', 'HECA', 'FACT', 'HKJK', 'GMMN'];
+    const europe = ['EGLL', 'LFPG', 'EDDF', 'EHAM', 'LEMD'];
+    const asia = ['ZBAA', 'RJTT', 'OMDB', 'VHHH', 'VTBS'];
+    const oceania =  ['YSSY', 'NZAA', 'YBBN', 'YMML', 'PHNL'];
+    const northAmerica = ['KATL', 'KLAX', 'KORD', 'KDFW', 'KDEN'];
+    const southAmerica =  ['SBGR', 'SAEZ', 'SBGL', 'SKBO', 'SCEL'];
+
+    switch (continent) {
+        case 'af':
+            icao = africa[Math.floor(Math.random() * africa.length)];
+            break;
+        case 'eu': 
+            icao = europe[Math.floor(Math.random() * europe.length)];
+            break;
+        case 'as': 
+            icao = asia[Math.floor(Math.random() * asia.length)];
+            break;
+        case 'oc': 
+            icao = oceania[Math.floor(Math.random() * oceania.length)];    
+            break;
+        case 'na': 
+            icao = northAmerica[Math.floor(Math.random() * northAmerica.length)];
+            break;    
+        case 'sa': 
+            icao = southAmerica[Math.floor(Math.random() * southAmerica.length)];
+            break;   
+        default:
+            break;
+    }
 
     airportMarkers.clearLayers();
 
