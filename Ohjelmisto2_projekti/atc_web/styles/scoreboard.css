@@ -1,0 +1,40 @@
+.scoreboard-box {
+    height: 25vh;
+    margin-left: 3vh;
+    padding: 10px 20px 20px 0px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: rgba(135, 206, 250, 0.6);
+    border-radius: 12%;
+    font-size: 1.5vh;
+}
+
+#leaderboard-rows tr td {
+    align-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.scoreboard-box table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.scoreboard-box th, .scoreboard-box td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 0.5px solid rgba(135, 206, 250, 0.6);
+}
+
+.scoreboard-box th {
+    color: black;
+    font-weight: bold;
+}
+
+.scoreboard-box tr:nth-child(even) {
+    background-color: rgba(143, 184, 210, 0.6);
+}
+
+.scoreboard-box tr:hover {
+    background-color: #a785ff;
+}

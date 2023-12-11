@@ -1,5 +1,6 @@
 'use strict';
 
+// CREATE MAP USING LEAFLET & OPENSTREETMAP
 const map = L.map('map').setView([60.23, 24.74], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -11,7 +12,6 @@ const startingPointIcon = L.icon({
     iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location.
     popupAnchor: [8, -41] // Point from which the popup should open relative to the iconAnchor.
 });
-
 
 
 let questions;
@@ -35,25 +35,45 @@ const nameInput = document.querySelector('#nameInput');
 const nameForm = document.querySelector('#nameForm');
 
 const questionModal = document.querySelector("#questionModal");
+
+const animationDiv = document.getElementById("correctAnswerAnimation");
+const answerElement = document.querySelector('.correct-co2');
+
 const infoButton = document.querySelector('.info-button');
-const popup = document.querySelector('.popup');
+infoButton.addEventListener('click', () => {
+    rulesPopup.style.display = 'block';
+});
+
+const rulesPopup = document.querySelector('.rules-popup');
+function closeRulesPopup() {
+  rulesPopup.style.display = 'none';
+}
 
 
 document.addEventListener('DOMContentLoaded', async (e) => {
-
+    //  HANDLE SUBMIT AND START THE GAME
     nameForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         handleFormSubmission();
 
-        const continent = document.querySelector('#startContinents').value; 
+        // ASSIGN QUESTIONS
+        questions = await getQuestions();
+
+        // GET STARTING CONTINENT & SET NEW AIPPORT ACCORDING TO IT
+        const continent = document.querySelector('#startContinent').value; 
         const current_airport =  await setStartingAirport(continent);
 
         await getCurrentAirportWeather(current_airport);
-        await getClosestAirports(current_airport);    
+        await getClosestAirports(current_airport);
+        showQuestion();
+        
+        // SHOW RULES AT THE START OF THE GAME
+        rulesPopup.style.display = 'block';
     });
 
-    questions = await getQuestions();
+    
 
+    // GET LEADERBOARD DATA & CREATE THE HTML OF IT
     const leaderboardData = await getScoreboard();
     leaderboardData.forEach((item, index) => {
         const row = `<tr>
@@ -62,20 +82,20 @@ document.addEventListener('DOMContentLoaded', async (e) => {
                         <td>${item.co2_emissions}</td> 
                      </tr>`;
         leaderboardBody.innerHTML += row;
-    });
-
-        
+    }); 
 });
 
 
 function handleFormSubmission() {
+    // SET PLAYER NAME
     playerName = nameInput.value;
     
-    const elements = document.getElementsByTagName('div');
-
+    // MAKE ELEMENTS CLICKEABLE
+    const elements = document.querySelectorAll('*');
     for(const element of elements) {
-        element.style.pointerEvents = 'auto';
-
+        if (element.id !== 'game-title') {
+            element.style.pointerEvents = 'auto';
+        }
     }
 
     // Fade out animation
@@ -110,7 +130,6 @@ async function getCurrentAirportWeather(current_airport) {
 }
 
 async function setStartingAirport(continent) {
-
     let icao;
 
     const africa = ['FAOR', 'HECA', 'FACT', 'HKJK', 'GMMN'];
@@ -143,34 +162,43 @@ async function setStartingAirport(continent) {
             break;
     }
 
+    // CLEAR ALL MARKERS ON MAP
     airportMarkers.clearLayers();
 
+    // GET CURRENT AIRPORT DATA
     const response = await fetch('http://127.0.0.1:3000/airport/' + icao);
     const airport = await response.json();
 
+    // CREATE MARKER ON THE USING THE DATA
     const marker = L.marker([airport.latitude_deg, airport.longitude_deg], {'icon': startingPointIcon}).
         addTo(map).
         bindPopup(airport.name).
         openPopup();
     airportMarkers.addLayer(marker);
 
-    // pan map to selected airport
+    // PAN MAP TO SELECTED AIRPORT
     map.flyTo([airport.latitude_deg, airport.longitude_deg]);
 
     return airport;
 }
 
 async function getClosestAirports(current_airport){
+    // GET 10 CLOSEST AIRPORTS ACCORDING TO THE CURRENT AIRPORT
     const lat = current_airport.latitude_deg;
     const lon = current_airport.longitude_deg;
     const response = await fetch(`http://127.0.0.1:3000/airport/closest/${lat}/${lon}`);
     const airports = await response.json();
 
+
     for (const airport of airports) {
+        // BECAUSE THE CURRENT AIRPORT WILL BE IN THE DATA, WE DONT WANT TO CALCULATE METRICS & CREATE A MARKER FOR IT.
         if (current_airport.name !== airport.name){
             const co2_emissions = calculateCO2(airport.Distance_KM);
+
+            // THE DATABASE QUERY RETURN THE DISTANCE TO THE AIRPORT ASWELL
             const distance = Math.floor(airport.Distance_KM);
 
+            // CREATE THE MARKERS FOR CLOSEST AIRPORTS WITH HTML IN THE POPUP
             const marker = L.marker([airport.latitude_deg, airport.longitude_deg])
                 .addTo(map)
                 .bindPopup(`
@@ -179,14 +207,38 @@ async function getClosestAirports(current_airport){
                                 <a class="airport-btn" data-airport-name="${airport.name}">Travel to airport</a>                            
                                 <p>Distance: ${distance}KM</p>
                                 <p>CO2 consumption: ${co2_emissions}KG</p>
-                            </div>`);
+                                <div class="dropdown-confirm">
+                                    <div class="confirm-content">
+                                        <p>Confirm travel?</p>
+                                        <button class="confirm-btn">✔</button>
+                                        <button class="cancel-btn">✖</button>
+                                    </div>
+                                </div>
+                            </div>
+                            `);
             
+            // FANCY WAY OF HANDLING THE CLICK OF THE "TRAVEL TO AIRPORT" BUTTON
             marker.on('popupopen', function (event) {
                 setTimeout(() => { // Timeout to ensure the popup's DOM is ready
                     document.querySelectorAll('.airport-btn').forEach(button => {
                         button.addEventListener('click', function () {
-                            travelToAirport(airport, co2_emissions, distance);
+                            document.querySelector('.dropdown-confirm').style.display = 'block';
                         });
+                        
+                        document.querySelector('.confirm-btn').addEventListener('click', function() {
+                            // Handle confirm action
+                            marker.closePopup();
+
+                            // document.querySelector('.dropdown-confirm').style.display = 'none';
+                            travelToAirport(airport, co2_emissions, distance, true);
+                        });
+
+                        document.querySelector('.cancel-btn').addEventListener('click', function() {
+                            // Handle cancel action
+                            // document.querySelector('.dropdown-confirm').style.display = 'none';
+                            marker.closePopup();
+                        }); 
+
                     });
                 }, 1);
             });
@@ -196,8 +248,7 @@ async function getClosestAirports(current_airport){
     return airports;
 }   
 
-async function travelToAirport(airport, co2_emissions, dist){
-    const conf = confirm(`Do you want to travel to ${airport.name}`);
+async function travelToAirport(airport, co2_emissions, dist, conf){
 
     if(conf) {
         distance += dist;
@@ -222,9 +273,6 @@ async function travelToAirport(airport, co2_emissions, dist){
     }
 }
 
-
-
-
 function calculateCO2(distance) {
     const fuel_burn_per_hour = 500; 
     const cruising_speed_km_hr = 900;
@@ -244,79 +292,66 @@ async function getScoreboard() {
     return scoreboard;
 }
 
+// THIS IS KIND OF UGLY [TOO MUCH NESTING: MAYBE MAKE A SEPARATE FUNCTION FOR WHEN THE ANSWER STREAK IS "HIT" OR PROBABLY COULD PASS THE MSG, COLOR OF THE BG ]
 async function checkAnswer(e){   
-    const answerElement = document.querySelector('.correct-co2');
-    const animationDiv = document.getElementById("correctAnswerAnimation");
-
-
-    if (e.innerText === correctAnswer) {
-
-        questionModal.style.display = 'none';
+    console.log('check answer', e.innerText);
+    console.log('check answer correct', correctAnswer);
+    
+    if (e.innerText.toUpperCase() == correctAnswer.toUpperCase()) {
         
-        animationDiv.style.backgroundColor = 'rgba(9, 83, 139, 0.7)';
-        pointsElement.innerHTML = points;
-        streakElement.innerText = answerStreak;
-
-        
-        points += 50;
         totalCorrectAnswers += 1;
         answerStreak += 1;
-
-        pointsElement.innerHTML = Math.floor(points);
+        Math.floor(points += 50);
+        
+        questionModal.style.display = 'none';
+        pointsElement.innerHTML = points;
         streakElement.innerText = answerStreak;
        
+        // EVERY 3 CORRECT ANSWERS REDUCE CO2 BY 20%
         if (answerStreak % 3 === 0) {
+            const text = `Your CO2 was reduced by 20%. \n Current consumption ${Math.floor(co2_consumed)}KG`;
+            showAnswerResult(text, 8);
+            animationDiv.style.backgroundColor = 'rgba(144, 238, 144, 0.7)';
+
             co2_consumed *= .8; 
             
-            answerElement.innerText = `Your CO2 was reduced by 20%. \n Current consumption ${Math.floor(co2_consumed)}KG`;
-            animationDiv.style.display = 'block';
-            animationDiv.style.opacity = 1;
-            animationDiv.style.animation = "fadeInOut 8s ease-in-out";
-
-            // Hide the animation after 3 seconds
-            setTimeout(() => {
-                animationDiv.style.opacity = 0;
-                animationDiv.style.animation = 'none';
-            }, 8000);
-            
         } else {
-
-            answerElement.innerText = 'Correct answer. \n +50 points.'
-            animationDiv.style.display = 'block';
-            animationDiv.style.opacity = 1;
-            animationDiv.style.animation = "fadeInOut 6s ease-in-out";
-
-            // Hide the animation after 3 seconds
-            setTimeout(() => {
-                animationDiv.style.opacity = 0;
-                animationDiv.style.animation = 'none';
-            }, 6000);
+            const text = 'Correct answer. \n +50 points.';
+            showAnswerResult(text, 6);
+            animationDiv.style.backgroundColor = 'rgba(144, 238, 144, 0.7)';
         }   
     } else {
-        questionModal.style.display = 'none';
+        const text = 'Wrong answer. \n Points reduced by 10%.';
+        showAnswerResult(text, 6);
 
-        answerElement.innerText = 'Wrong answer. \n Points reduced by 10%.'
-        animationDiv.style.backgroundColor = 'rgba(255, 72, 0, 0.7)';
-
-        animationDiv.style.display = 'block';
-        animationDiv.style.opacity = 1;
-        animationDiv.style.animation = "fadeInOut 6s ease-in-out";
-
-            // Hide the animation after 3 seconds
-            setTimeout(() => {
-                animationDiv.style.opacity = 0;
-                animationDiv.style.animation = 'none';
-            }, 6000);
-
+        // REDUCE POINTS BY 10% AND RESET THE ANSWER STREAK
         points *= .9;
         answerStreak = 0;  
-        
-    }
+        streakElement.innerText = answerStreak;
+    } 
 
-    if (points >= 100) {
+
+    if (points >= 1000) {
         await fetch(`http://127.0.0.1:3000/player/setScore/${playerName}/${co2_consumed}/${distance}`);
         alert('You won! \n Check if you reached the top of the leaderboard.');
     }
+}
+
+function showAnswerResult(text, time) {
+    questionModal.style.display = 'none';
+
+    answerElement.innerText = text;
+    animationDiv.style.backgroundColor = 'rgba(255, 72, 0, 0.7)';
+
+    animationDiv.style.display = 'block';
+    animationDiv.style.opacity = 1;
+    animationDiv.style.animation = `fadeInOut ${time}s ease-in-out`;
+
+        setTimeout(() => {
+            animationDiv.style.opacity = 0;
+            animationDiv.style.animation = 'none';
+            animationDiv.style.display = 'none';
+        }, 6000);
 }
 
 async function getQuestions(){
@@ -328,30 +363,26 @@ async function getQuestions(){
 
 async function showQuestion() {
     
+    // SELECT A RANDOM QUESTION FROM THE QUESTIONS ARRAY
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
 
+    // SET THE CORRECT ANSWER TO VARIABLE TO BE USED LATER TO CHECK THAT THE ANSWER IS CORRECT
     correctAnswer = randomQuestion.answer;
 
+    console.log(correctAnswer);
+
+    // SET QUESTIONS TEXT
     document.getElementById("questionText").innerText = randomQuestion.question_text;
+    // ASSIGN ANWERS TO ARRAY & RANDOMIZE THE 
     const answers = [randomQuestion.wrong_answer, randomQuestion.answer, randomQuestion.wrong_answer2].filter(a => a);
+
+    // GET 3 ANSWER BUTTON ELEMENTS FROM DOM THEN LOOP THROUGH THEM AND ASSIGN THE TEXT AS ANSWER 
     const answerButtons = document.getElementsByClassName("answer");
     answers.forEach((answer, index) => {
         answerButtons[index].innerText = answer;
     });
     
+    // FINALLY SHOW THE MODAL/POPUP FOR THE QUESTION
     questionModal.style.display = "block";
 }
 
-const modal = document.getElementById("questionModal");
-const closeButton = document.getElementsByClassName("close-button")[0];
-closeButton.onclick = function() {
-    modal.style.display = "none";
-};
-
-infoButton.addEventListener('click', () => {
-  popup.style.display = 'block';
-});
-
-function closePopup() {
-  popup.style.display = 'none';
-}

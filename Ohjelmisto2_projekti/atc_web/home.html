@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <title>Air Travelller's Challenge</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" href="./styles/scoreboard.css">
+    <link rel="stylesheet" href="./styles/answer.css">
+    <link rel="stylesheet" href="./styles/siderbar.css">
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="app.js" defer></script>
     <title>AIR TRAVELLER'S CHALLENGE</title>
@@ -15,27 +18,34 @@
 
 <div id="questionModal" class="modal">
     <div class="modal-content">
-        <span class="close-button">×</span>
         <h2 id="questionText"></h2>
-        <button class="answer" onclick="checkAnswer(this)"></button>
-        <button class="answer" onclick="checkAnswer(this)"></button>
-        <button class="answer" onclick="checkAnswer(this)"></button>
+        <div id="answerButtons">
+            <a class="answer" onclick="checkAnswer(this)"></a>
+            <a class="answer" onclick="checkAnswer(this)"></a>
+            <a class="answer" onclick="checkAnswer(this)"></a>
+        </div>
     </div>
 </div>
 
 <div id="startWrapper">
     <form id="nameForm">
-        <label for="nameInput">Player name:</label>
-        <input type="text" id="nameInput" required>
-        <label for="startContinents">Choose a continent:</label>
-        <select name="startContinents" id="startContinents">
-            <option value="af">Africa</option>
-            <option value="as">Asia</option>
-            <option value="eu">Europe</option>
-            <option value="na">North America</option>
-            <option value="oc">Oceania</option>
-            <option value="sa">South America</option>
-        </select>
+        <div id="nameInputWrapper">
+            <label for="nameInput">Player name:</label>
+            <input type="text" id="nameInput" required>
+        </div>
+        
+        <div id="continentSelect">
+            <label for="startContinent">Start continent:</label>
+            <select name="startContinent" id="startContinent">  
+                <option value="af">Africa</option>
+                <option value="as">Asia</option>
+                <option value="eu">Europe</option>
+                <option value="na">North America</option>
+                <option value="oc">Oceania</option>
+                <option value="sa">South America</option>
+            </select>
+        </div>
+        
         <input type="submit" value="Submit">
     </form>
 </div>
@@ -79,8 +89,8 @@
     </div>
 </div>
 
-<div class="popup">
-  <div id="closeButton" onclick="closePopup()">X</div>
+<div class="rules-popup">
+  <div id="closeButton" onclick="closeRulesPopup()">X</div>
   <p><h1>Game Rules: Air Traveller's Challenge</h1>
 
 <h2>1. Objective</h2>

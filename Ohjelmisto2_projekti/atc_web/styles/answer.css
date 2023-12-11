@@ -1,0 +1,74 @@
+#questionModal {
+    display: none; 
+    position: absolute;
+    z-index: 999; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    margin: 15% auto;
+    width: 60%;
+    color: #ffffff; /* White text color */
+    font-family: 'Your font family', sans-serif; /* Match the font family of the page */
+    padding: 20px; 
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.35), 0px -4px 5px rgba(0, 0, 0, 0.35); 
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#answerButtons {
+    display: flex;
+    gap: 4vh;
+    text-align: center;
+    align-items: center;
+
+}
+
+#answerButtons a {
+    padding: 0.75rem 1.25rem;
+    border-radius: 10rem;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 0.15rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  #answerButtons a:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0cf;
+    border-radius: 10rem;
+    z-index: -2;
+  }
+  
+  #answerButtons a:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #008fb3;
+    transition: all 0.3s;
+    border-radius: 10rem;
+    z-index: -1;
+  }
+  #answerButtons a:hover {
+    color: #fff;
+    cursor: pointer;
+  }
+  #answerButtons a:hover:before {
+    width: 100%;
+  }
