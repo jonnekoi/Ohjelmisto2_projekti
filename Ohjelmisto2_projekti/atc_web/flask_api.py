@@ -51,7 +51,7 @@ def get_questions_avatar_sql():
 
 @app.route('/scoreboard')
 def get_scoreboard():
-    sql = 'SELECT * FROM scoreboard ORDER BY `co2_emissions` ASC LIMIT 5    ;'
+    sql = 'SELECT * FROM scoreboard ORDER BY `co2_emissions` ASC LIMIT 5;'
     cursor = db.get_conn().cursor(dictionary=True)
     cursor.execute(sql, ())
     result = cursor.fetchall()

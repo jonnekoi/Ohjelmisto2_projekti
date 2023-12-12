@@ -108,7 +108,6 @@ function handleFormSubmission() {
     }, 1000);
 }
 
-
 function kelvinToCelcius(kelvin){
     return Math.floor(kelvin - 273.15);
 }
@@ -292,46 +291,46 @@ async function getScoreboard() {
     return scoreboard;
 }
 
-// THIS IS KIND OF UGLY [TOO MUCH NESTING: MAYBE MAKE A SEPARATE FUNCTION FOR WHEN THE ANSWER STREAK IS "HIT" OR PROBABLY COULD PASS THE MSG, COLOR OF THE BG ]
+
+
+
 async function checkAnswer(e){   
-    console.log('check answer', e.innerText);
-    console.log('check answer correct', correctAnswer);
-    
     if (e.innerText.toUpperCase() == correctAnswer.toUpperCase()) {
         
         totalCorrectAnswers += 1;
         answerStreak += 1;
-        Math.floor(points += 50);
         
         questionModal.style.display = 'none';
-        pointsElement.innerHTML = points;
+        pointsElement.innerHTML = Math.floor(points += 50);
         streakElement.innerText = answerStreak;
        
         // EVERY 3 CORRECT ANSWERS REDUCE CO2 BY 20%
         if (answerStreak % 3 === 0) {
-            const text = `Your CO2 was reduced by 20%. \n Current consumption ${Math.floor(co2_consumed)}KG`;
-            showAnswerResult(text, 8);
-            animationDiv.style.backgroundColor = 'rgba(144, 238, 144, 0.7)';
-
             co2_consumed *= .8; 
-            
+            const text = `Your CO2 was reduced by 20%. \n Current consumption ${Math.floor(co2_consumed)}KG`;
+            showAnswerResult(text, 4);
+
+            animationDiv.style.pointerEvents = 'none';
+            animationDiv.style.backgroundColor = 'rgba(144, 238, 144, 0.7)';
+            CO2Element.innerText = `${Math.floor(co2_consumed)}KG`;
         } else {
             const text = 'Correct answer. \n +50 points.';
-            showAnswerResult(text, 6);
+            showAnswerResult(text, 4);
+            animationDiv.style.pointerEvents = 'none';
             animationDiv.style.backgroundColor = 'rgba(144, 238, 144, 0.7)';
         }   
     } else {
         const text = 'Wrong answer. \n Points reduced by 10%.';
-        showAnswerResult(text, 6);
+        showAnswerResult(text, 4);
 
         // REDUCE POINTS BY 10% AND RESET THE ANSWER STREAK
-        points *= .9;
         answerStreak = 0;  
+
+        pointsElement.innerHTML = Math.floor(points *= .9);
         streakElement.innerText = answerStreak;
     } 
 
-
-    if (points >= 1000) {
+    if (points >= 100) {
         await fetch(`http://127.0.0.1:3000/player/setScore/${playerName}/${co2_consumed}/${distance}`);
         alert('You won! \n Check if you reached the top of the leaderboard.');
     }
@@ -347,11 +346,11 @@ function showAnswerResult(text, time) {
     animationDiv.style.opacity = 1;
     animationDiv.style.animation = `fadeInOut ${time}s ease-in-out`;
 
-        setTimeout(() => {
-            animationDiv.style.opacity = 0;
-            animationDiv.style.animation = 'none';
-            animationDiv.style.display = 'none';
-        }, 6000);
+    setTimeout(() => {
+        animationDiv.style.opacity = 0;
+        animationDiv.style.animation = 'none';
+        animationDiv.style.display = 'none';
+    }, 4000);
 }
 
 async function getQuestions(){
@@ -362,20 +361,23 @@ async function getQuestions(){
 }
 
 async function showQuestion() {
-    
     // SELECT A RANDOM QUESTION FROM THE QUESTIONS ARRAY
-    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    const randomQuestion = getRandomQuestion();
 
     // SET THE CORRECT ANSWER TO VARIABLE TO BE USED LATER TO CHECK THAT THE ANSWER IS CORRECT
     correctAnswer = randomQuestion.answer;
-
-    console.log(correctAnswer);
 
     // SET QUESTIONS TEXT
     document.getElementById("questionText").innerText = randomQuestion.question_text;
     // ASSIGN ANWERS TO ARRAY & RANDOMIZE THE 
     const answers = [randomQuestion.wrong_answer, randomQuestion.answer, randomQuestion.wrong_answer2].filter(a => a);
 
+    // SHUFFLE THE ANSWERS ARRAY USING FISHER-YATES ALGORITHM
+    for (let i = answers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+    
     // GET 3 ANSWER BUTTON ELEMENTS FROM DOM THEN LOOP THROUGH THEM AND ASSIGN THE TEXT AS ANSWER 
     const answerButtons = document.getElementsByClassName("answer");
     answers.forEach((answer, index) => {
@@ -385,4 +387,22 @@ async function showQuestion() {
     // FINALLY SHOW THE MODAL/POPUP FOR THE QUESTION
     questionModal.style.display = "block";
 }
+
+// Function to get a random question and remove it from the 'questions' array
+function getRandomQuestion() {
+    if (questions.length === 0) {
+        return null; //
+    }
+
+    const index = Math.floor(Math.random() * questions.length);
+    const randomQuestion = questions[index];
+
+    // Remove the selected question from the array
+    questions.splice(index, 1);
+
+    return randomQuestion;
+}
+
+
+
 

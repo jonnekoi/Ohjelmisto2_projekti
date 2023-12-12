@@ -32,7 +32,7 @@
     cursor: pointer;
     margin: auto;
     /* background-color: rgba(0, 0, 0, 0.4); */
-    /* border-radius: 40%; */
+    border-radius: 12%;
     /* padding: 10%; */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 4px 5px, rgba(0, 0, 0, 0.35) 0px -4px 5px;
 }
